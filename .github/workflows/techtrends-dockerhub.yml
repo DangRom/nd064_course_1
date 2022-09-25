@@ -77,9 +77,10 @@ jobs:
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: ./project/techtrends
+          images: ${{ env.IMAGE_NAME }}
           file: ./project/techtrends/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: TechTrends:latest
+          tags: latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
