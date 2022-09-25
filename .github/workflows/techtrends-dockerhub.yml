@@ -17,7 +17,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ''
   # github.repository as <account>/<repo>
-  IMAGE_NAME: dangrom/techtrend
+  IMAGE_NAME: dangrom/TechTrends
 
 
 jobs:
@@ -79,7 +79,7 @@ jobs:
           context: ./project/techtrends
           file: ./project/techtrends/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
