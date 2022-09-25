@@ -6,8 +6,6 @@ name: Docker
 # documentation.
 
 on:
-  schedule:
-    - cron: '44 6 * * *'
   push:
     branches: [ "main" ]
     # Publish semver tags as releases.
@@ -17,7 +15,7 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: 
+  REGISTRY: ''
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
@@ -52,7 +50,6 @@ jobs:
         with:
           context: ./project/techtrends/
           push: true
-          images: python:3.8
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
