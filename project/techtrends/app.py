@@ -1,8 +1,10 @@
 import sqlite3
 
 from flask import Flask, jsonify, json, render_template, request, url_for, redirect, flash
-from werkzeug.exceptions import abort
+import logging
 
+app = Flask(__name__)
+logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # Function to get a database connection.
 # This function connects to database with the name `database.db`
 def get_db_connection():
@@ -64,6 +66,27 @@ def create():
             return redirect(url_for('index'))
 
     return render_template('create.html')
+
+@app.route('/healthz')
+def healthy():
+    return "result: OK - healthy", 200
+
+@app.route('/metrics')
+def metrics():
+
+    app.logger.info('Getting post counter')
+    connection = get_db_connection()
+    postCounter = connection.execute('SELECT COUNT(id) FROM posts').fetchone()
+    connection.close()
+    app.logger.info('Finish post counter')
+
+    app.logger.info('Getting connection counter')
+    connection = get_db_connection()
+    connectionCounter = connection.execute('SELECT COUNT(*) FROM sqlite_master').fetchone()
+    connection.close()
+    app.logger.info('Finish connection counter')
+
+    return {"db_connection_count": connectionCounter[0], "post_count": postCounter[0]}, 200
 
 # start the application on port 3111
 if __name__ == "__main__":
