@@ -52,6 +52,7 @@ jobs:
         with:
           context: ./project/techtrends/
           push: true
+          images: python:3.8
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -78,6 +79,7 @@ jobs:
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: ./project/techtrends
+          images: python:3.8
           file: ./project/techtrends/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
