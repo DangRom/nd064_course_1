@@ -17,7 +17,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ''
   # github.repository as <account>/<repo>
-  IMAGE_NAME: techtrend
+  IMAGE_NAME: dangrom/techtrend
 
 
 jobs:
@@ -66,8 +66,8 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: python:3.8
+#        with:
+#          images: python:3.8
 
 
       # Build and push Docker image with Buildx (don't push on PR)
