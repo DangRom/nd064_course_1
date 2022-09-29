@@ -6,7 +6,7 @@ metadata:
   labels:
     app: {{ .Values.namespace.name }}
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       name: {{ .Values.namespace.name }}
@@ -42,4 +42,4 @@ spec:
       restartPolicy: Always
   selector:
     matchLabels:
-      app: sandbox
+      app: {{ .Values.namespace.name }}
