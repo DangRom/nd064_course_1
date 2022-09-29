@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: techtrend-stating
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/DangRom/nd064_course_1/"
+    targetRevision: HEAD
+    helm:
+      valueFiles: ['values-staging.yaml']
+    path: project/helm
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: default
