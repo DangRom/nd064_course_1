@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.namespace.name }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: {{ .Values.namespace.name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  template:
+    metadata:
+      name: {{ .Values.namespace.name }}
+      labels:
+        app: {{ .Values.namespace.name }}
+    spec:
+      containers:
+        - name: {{ .Values.resources.name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          # image: dangrom/techtrends:latest
+          imagePullPolicy: {{ .Values.image.IfNotPresent }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.livenessProbePort }}
+              path: {{ .Values.liveness }}
+            periodSeconds: 3
+            initialDelaySeconds: 3
+          readinessProbe:
+            httpGet:
+              port: {{ .Values.readinessProbePort }}
+              path: {{ .Values.readinessProbe }}
+            periodSeconds: 3
+            initialDelaySeconds: 3
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: sandbox
