@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sandbox
+  namespace: sandbox
+  labels:
+    app: sandbox
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: sandbox
+      labels:
+        app: sandbox
+    spec:
+      containers:
+        - name: techtrends
+          image: dangrom/techtrends:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 250m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          ports:
+            - containerPort: 3111
+          livenessProbe:
+            httpGet:
+              port: 3111
+              path: /healthz
+            periodSeconds: 3
+            initialDelaySeconds: 3
+          readinessProbe:
+            httpGet:
+              port: 3111
+              path: /healthz
+            periodSeconds: 3
+            initialDelaySeconds: 3
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: sandbox

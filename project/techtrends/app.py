@@ -69,6 +69,7 @@ def create():
 
 @app.route('/healthz')
 def healthy():
+    app.logger.info('health-check')
     return "result: OK - healthy", 200
 
 @app.route('/metrics')
