@@ -9,4 +9,6 @@ RUN python3 init_db.py
 
 COPY . .
 
+EXPOSE 3111
+
 CMD [ "python3", "app.py"]

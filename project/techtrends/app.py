@@ -1,7 +1,9 @@
 import sqlite3
 
-from flask import Flask, jsonify, json, render_template, request, url_for, redirect, flash
+from flask import Flask, render_template, request, url_for, redirect, flash
 import logging
+import sys 
+from datetime import datetime
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
@@ -10,7 +12,23 @@ logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name
 def get_db_connection():
     connection = sqlite3.connect('database.db')
     connection.row_factory = sqlite3.Row
+    # session["db_connection_count"] = session["db_connection_count"] + 1
+
+    f = open("db_connection_count.txt", "r")
+    db_connection_count = int(float(f.read()))
+    f.close()
+
+    f = open("db_connection_count.txt", "w")
+    db_connection_count = db_connection_count  + 1
+    f.write(str(db_connection_count))
+    f.close()
+
     return connection
+
+def log(x): 
+    stdout_fileno = sys.stdout
+    now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+    stdout_fileno.write('INFO:app:' + str(now) +', ' + str(x) + ' \n')
 
 # Function to get a post using its ID
 def get_post(post_id):
@@ -75,19 +93,17 @@ def healthy():
 @app.route('/metrics')
 def metrics():
 
-    app.logger.info('Getting post counter')
+    log('Getting post counter')
     connection = get_db_connection()
     postCounter = connection.execute('SELECT COUNT(id) FROM posts').fetchone()
     connection.close()
-    app.logger.info('Finish post counter')
+    log('Finish post counter')
 
-    app.logger.info('Getting connection counter')
-    connection = get_db_connection()
-    connectionCounter = connection.execute('SELECT COUNT(*) FROM sqlite_master').fetchone()
-    connection.close()
-    app.logger.info('Finish connection counter')
+    log('Getting connection counter')
+    connectionCounter = get_db_connection()
+    log('Finish connection counter')
 
-    return {"db_connection_count": connectionCounter[0], "post_count": postCounter[0]}, 200
+    return {"db_connection_count": connectionCounter, "post_count": postCounter[0]}, 200
 
 # start the application on port 3111
 if __name__ == "__main__":
