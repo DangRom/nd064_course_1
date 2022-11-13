@@ -1,14 +1,12 @@
 import sqlite3
 
 from flask import Flask, render_template, request, url_for, redirect, flash
-import logging
 import sys 
 from datetime import datetime
 
-app = Flask(__name__)
-logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # Function to get a database connection.
 # This function connects to database with the name `database.db`
+db_connection_count = 0
 def get_db_connection():
     connection = sqlite3.connect('database.db')
     connection.row_factory = sqlite3.Row
@@ -32,6 +30,7 @@ def log(x):
 
 # Function to get a post using its ID
 def get_post(post_id):
+    log('get post: ' + post_id)
     connection = get_db_connection()
     post = connection.execute('SELECT * FROM posts WHERE id = ?',
                         (post_id,)).fetchone()
@@ -63,11 +62,13 @@ def post(post_id):
 # Define the About Us page
 @app.route('/about')
 def about():
+    log('about page')
     return render_template('about.html')
 
 # Define the post creation functionality 
 @app.route('/create', methods=('GET', 'POST'))
 def create():
+    log('creating a new post')
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
@@ -87,7 +88,7 @@ def create():
 
 @app.route('/healthz')
 def healthy():
-    app.logger.info('health-check')
+    log('health-check')
     return "result: OK - healthy", 200
 
 @app.route('/metrics')
@@ -100,7 +101,8 @@ def metrics():
     log('Finish post counter')
 
     log('Getting connection counter')
-    connectionCounter = get_db_connection()
+    f = open("db_connection_count.txt", "r")
+    connectionCounter = f.read()
     log('Finish connection counter')
 
     return {"db_connection_count": connectionCounter, "post_count": postCounter[0]}, 200
